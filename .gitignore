@@ -1,0 +1,14 @@
+# MATLAB files
+*.asv
+*.m~
+*.mat
+*.fig
+*.p
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Large/data folders (exclude unless using Git LFS)
+/data/
+/results/
