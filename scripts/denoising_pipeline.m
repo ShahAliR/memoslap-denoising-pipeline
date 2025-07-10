@@ -46,7 +46,10 @@ ses_1 = 'ses-1'; % Change to 'ses-01' if needed
 ses_2 ='ses-2'; % Change to 'ses-01' if needed
 ses_1_str ='ses_1'; % Change to 'ses_01' if needed
 ses_2_str ='ses_2';% Change too 'ses-02' if needed
-
+PIPELINE CODE (SHARED ACROSS USERS)
+% ==============================================
+batch.Setup.RT = 1;
+% (Rest of your pipeline code here)
 % Verify paths exist before proceeding
 if ~exist(root_fmriprep, 'dir')
     error('fmriprep directory not found: %s', root_fmriprep);
