@@ -17,26 +17,39 @@ clc
 %setpaths of CONN and SPM
 addpath /usr/local/MATLAB/MATLAB_TOOLBOX/conn_la
 addpath /usr/local/MATLAB/MATLAB_TOOLBOX/spm12
-
-% Choose your project
+% 1. Project name (fixed)
 Project = 'MeMoSLAP';
 
-root_fmriprep = fullfile('/media/data05/Alireza/BIDS/derivatives/fMRIPrep');
-root_conn = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based';
-batch.Setup.RT = 1;
+% 2. Define root paths (user must customize these)
+% - Replace with relative paths or variables that auto-detect location
+repo_root = fileparts(mfilename('fullpath')); % Auto-detects script location
+
+% Default BIDS/derivatives structure (relative to repo root)
+root_fmriprep = fullfile(repo_root, 'derivatives', 'fMRIPrep');
+root_conn = fullfile(repo_root, 'derivatives', 'Conn_script_based');
+
+% 3. Mask paths (store masks in repo's /masks/ folder)
+mask_dir = fullfile(repo_root, 'masks');
+lvifg_mask_path = fullfile(mask_dir, 'resampled_res-2_lvIFG_seed_6mm.nii');
+rotc_mask_path = fullfile(mask_dir, 'resampled_rOTC_res-02.nii');
+hippo_mask_path = fullfile(mask_dir, 'resampled_hippocampus_4mm_mask_res-02.nii');
+
+% 4. Filename filters (shared across users)
 struct_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_desc-preproc_T1w.nii.gz';
 func_filter_name = '_task-resting_dir-AP_space-MNI152NLin6Asym*_desc-preproc_bold.nii.gz';
 timeseries_filter_name = '_task-resting_dir-AP_merg_desc-confounds_timeseries.tsv'; 
 GM_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-GM_probseg.nii';
-WM_filter_name ='_acq-mprage_space-MNI152NLin6Asym*_label-WM_probseg.nii';
+WM_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-WM_probseg.nii';
 CSF_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-CSF_probseg.nii';
-lvifg_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_res-2_lvIFG_seed_6mm.nii';
-rotc_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_rOTC_res-02.nii';
-hippo_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_hippocampus_4mm_mask_res-02.nii';
-ses_1 ='ses-1'; %% Modify to 'ses-01' if your filenames are like this
-ses_2 ='ses-2';%% Modify to 'ses-02' if your filenames are like this
-ses_1_str ='ses_1';%% Modify to 'ses_01' if your filenames are like this
-ses_2_str ='ses_2';%% Modify to 'ses-02' if your filenames are like this
+% 5. Session naming (user may need to modify)
+ses_1 = 'ses-1'; % Change to 'ses-01' if needed
+ses_2 ='ses-2'; % Change to 'ses-01' if needed
+ses_1_str ='ses_1'; % Change to 'ses_01' if needed
+ses_2_str ='ses_2';% Change too 'ses-02' if needed
+
+% ==============================================
+batch.Setup.RT = 1;
+% (Rest of your pipeline code here)
 
 % Verify paths exist before proceeding
 if ~exist(root_fmriprep, 'dir')
@@ -338,27 +351,6 @@ for sub_idx = 1:numel(list_sub)
     end
 end
 
-%% QA Setup
-% Add this right before the Denoising section
-batch.Setup.qasettings = struct();
-batch.Setup.qasettings.fmri = 1;       % Enable fMRI QA
-batch.Setup.qasettings.structural = 1; % Enable structural QA
-batch.Setup.qasettings.functional = 1; % Enable functional QA
-batch.Setup.qasettings.rois = 1;       % Enable ROI QA
-batch.Setup.qasettings.overwrite = 1;  % Overwrite existing QA files
-batch.Setup.qasettings.save = 1;       % Save QA results
-batch.Setup.qasettings.detailed = 1;    % More detailed QA
-batch.Setup.qasettings.outputdir = fullfile(root_conn, 'QA'); % QA output directory
-
-% Create QA directory if it doesn't exist
-if ~exist(fullfile(root_conn, 'QA'), 'dir')
-    mkdir(fullfile(root_conn, 'QA'));
-end
-
-% Additional QA thresholds (optional)
-batch.Setup.qasettings.motion_threshold = 1;  % 1mm motion threshold
-batch.Setup.qasettings.snr_threshold = 100;   % SNR threshold
-batch.Setup.qasettings.global_threshold = 3;  % Z-score threshold for global signal
 %% batch.Denoising
 % Debug: Verify denoising settings
 %Denoising steps for Debugging 
@@ -376,17 +368,6 @@ batch.Setup.qasettings.global_threshold = 3;  % Z-score threshold for global sig
 % line 657 Creates ROI_Subject###_Session###.mat files (activation timecourses for each roi)
 %this means DATA_Subject was not created 
 % open conn_process
-%% Denoising
-% Denoising QA configuration
-batch.Denoising.qasettings = struct();
-batch.Denoising.qasettings.fmri = 1;          % Enable denoising QA
-batch.Denoising.qasettings.overwrite = 1;     % Overwrite existing QA files
-batch.Denoising.qasettings.save = 1;          % Save QA results
-batch.Denoising.qasettings.figures = 1;       % Generate figures
-batch.Denoising.qasettings.outputfiles = 1;   % Save output files
-batch.Denoising.qasettings.outputdir = fullfile(root_conn, 'QA');
-
- 
 
 % Denoising
 batch.Denoising.done = 1;
@@ -447,17 +428,6 @@ end
 
 %% batch.Analysis
 %% Analysis
-% Analysis QA configuration
-batch.Analysis.qasettings = struct();
-batch.Analysis.qasettings.fmri = 1;           % Enable analysis QA
-batch.Analysis.qasettings.overwrite = 1;      % Overwrite existing QA files
-batch.Analysis.qasettings.save = 1;           % Save QA results
-batch.Analysis.qasettings.figures = 1;        % Generate figures
-batch.Analysis.qasettings.outputfiles = 1;    % Save output files
-batch.Analysis.qasettings.outputdir = fullfile(root_conn, 'QA');
-
-
-
 % Analysis setup to run ALL steps
 batch.Analysis.done = 1;
 batch.Analysis.overwrite = 1;
