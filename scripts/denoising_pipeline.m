@@ -17,26 +17,35 @@ clc
 %setpaths of CONN and SPM
 addpath /usr/local/MATLAB/MATLAB_TOOLBOX/conn_la
 addpath /usr/local/MATLAB/MATLAB_TOOLBOX/spm12
-
-% Choose your project
+% 1. Project name (fixed)
 Project = 'MeMoSLAP';
 
-root_fmriprep = fullfile('/media/data05/Alireza/BIDS/derivatives/fMRIPrep');
-root_conn = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based';
-batch.Setup.RT = 1;
+% 2. Define root paths (user must customize these)
+% - Replace with relative paths or variables that auto-detect location
+repo_root = fileparts(mfilename('fullpath')); % Auto-detects script location
+
+% Default BIDS/derivatives structure (relative to repo root)
+root_fmriprep = fullfile(repo_root, 'derivatives', 'fMRIPrep');
+root_conn = fullfile(repo_root, 'derivatives', 'Conn_script_based');
+
+% 3. Mask paths (store masks in repo's /masks/ folder)
+mask_dir = fullfile(repo_root, 'masks');
+lvifg_mask_path = fullfile(mask_dir, 'resampled_res-2_lvIFG_seed_6mm.nii');
+rotc_mask_path = fullfile(mask_dir, 'resampled_rOTC_res-02.nii');
+hippo_mask_path = fullfile(mask_dir, 'resampled_hippocampus_4mm_mask_res-02.nii');
+
+% 4. Filename filters (shared across users)
 struct_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_desc-preproc_T1w.nii.gz';
 func_filter_name = '_task-resting_dir-AP_space-MNI152NLin6Asym*_desc-preproc_bold.nii.gz';
 timeseries_filter_name = '_task-resting_dir-AP_merg_desc-confounds_timeseries.tsv'; 
 GM_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-GM_probseg.nii';
-WM_filter_name ='_acq-mprage_space-MNI152NLin6Asym*_label-WM_probseg.nii';
+WM_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-WM_probseg.nii';
 CSF_filter_name = '_acq-mprage_space-MNI152NLin6Asym*_label-CSF_probseg.nii';
-lvifg_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_res-2_lvIFG_seed_6mm.nii';
-rotc_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_rOTC_res-02.nii';
-hippo_mask_path = '/media/data05/Alireza/BIDS/derivatives/Conn_script_based/masks/resampled_hippocampus_4mm_mask_res-02.nii';
-ses_1 ='ses-1'; %% Modify to 'ses-01' if your filenames are like this
-ses_2 ='ses-2';%% Modify to 'ses-02' if your filenames are like this
-ses_1_str ='ses_1';%% Modify to 'ses_01' if your filenames are like this
-ses_2_str ='ses_2';%% Modify to 'ses-02' if your filenames are like this
+% 5. Session naming (user may need to modify)
+ses_1 = 'ses-1'; % Change to 'ses-01' if needed
+ses_2 ='ses-2'; % Change to 'ses-01' if needed
+ses_1_str ='ses_1'; % Change to 'ses_01' if needed
+ses_2_str ='ses_2';% Change too 'ses-02' if needed
 
 % Verify paths exist before proceeding
 if ~exist(root_fmriprep, 'dir')
