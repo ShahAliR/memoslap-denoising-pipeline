@@ -15,6 +15,7 @@ The pipeline assumes that all functional data has already been preprocessed usin
 - `docs/`: Pipeline overview and documentation
 
 ## Requirements
+The script has been tested and works with the following software versions:
 - MATLAB (version R2025a)
 - CONN toolbox (version 22.v2407)
 - SPM12 (version 7771)
