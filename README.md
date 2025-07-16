@@ -17,7 +17,7 @@ The pipeline assumes that all functional data has already been preprocessed usin
 ## Requirements
 - MATLAB (version R2025a)
 - CONN toolbox (version 22.v2407)
-- SPM12(SPM12 (VERSION 7771))
+- SPM12 (VERSION 7771)
 
 ## Usage
 1. Clone the repository
