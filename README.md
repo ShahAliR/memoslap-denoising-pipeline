@@ -2,7 +2,7 @@
 
 # MeMOSLAP-fMRI Denoising using fMRIPrep Preprocessed Data
 
-This repository provides MATLAB batch scripts for **denoising resting-state fMRI data**, based on the **recommended denoising pipeline** described by [Wang et al. (2024)](https://doi.org/10.1371/journal.pcbi.1011942), and **validated within the [MeMOSLAP](https://www.memoslap.de/en/home/) imaging committee**, using the [**CONN toolbox**](https://web.conn-toolbox.org/home) in batch mode.
+This repository provides MATLAB scripts for **denoising resting-state fMRI data**, based on the **recommended denoising pipeline** described by [Wang et al. (2024)](https://doi.org/10.1371/journal.pcbi.1011942), and **validated within the [MeMOSLAP](https://www.memoslap.de/en/home/) imaging committee**, using SPM12 and  the [**CONN toolbox**](https://web.conn-toolbox.org/home) in batch mode.
 
 The pipeline assumes that all functional data has already been preprocessed using [**fMRIPrep**](https://doi.org/10.1038/s41592-018-0235-4), and is compatible with BIDS-derivative outputs. It supports structured, reproducible denoising for downstream functional connectivity analysis.
 
